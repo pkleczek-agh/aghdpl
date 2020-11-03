@@ -1,0 +1,72 @@
+\chapter{Przykłady elementów pracy dyplomowej}
+
+\section{Liczba}
+
+Pakiet \texttt{siunitx} zadba o to, by liczba została poprawnie sformatowana: \\
+\begin{center}
+	\num{1234567890.0987654321}
+\end{center}
+
+
+\section{Rysunek}
+
+Pakiet \texttt{subcaption} pozwala na umieszczanie w podpisie rysunku odnośników do ,,podilustracji'': \\
+
+\begin{figure}[h]
+	\centering
+	\begin{subfigure}{0.35\textwidth}
+		\centering
+		\framebox[2.0\width]{A}
+		\subcaption{\label{subfigure_a}}
+	\end{subfigure}
+	\begin{subfigure}{0.35\textwidth}
+		\centering
+		\framebox[2.0\width]{B}
+		\subcaption{\label{subfigure_b}}
+	\end{subfigure}
+	
+	\caption{\label{fig:subcaption_example}Przykład użycia \texttt{\textbackslash subcaption}: \protect\subref{subfigure_a} litera A, \protect\subref{subfigure_b} litera B.}
+\end{figure}
+
+\section{Tabela}
+
+Pakiet \texttt{threeparttable} umożliwia dodanie do tabeli adnotacji: \\
+
+\begin{table}[h]
+	\centering
+	
+	\begin{threeparttable}
+		\caption{Przykład tabeli}
+		\label{tab:table_example}
+		
+		\begin{tabularx}{0.6\textwidth}{C{1}}
+			\toprule
+			\thead{Nagłówek\tnote{a}} \\
+			\midrule
+			Tekst 1 \\
+			Tekst 2 \\
+			\bottomrule
+		\end{tabularx}
+		
+		\begin{tablenotes}
+			\footnotesize
+			\item[a] Jakiś komentarz\textellipsis
+		\end{tablenotes}
+		
+	\end{threeparttable}
+\end{table}
+
+\section{Wzory matematyczne}
+
+Czasem zachodzi potrzeba wytłumaczenia znaczenia symboli użytych w równaniu. Można to zrobić z użyciem zdefiniowanego na potrzeby niniejszej klasy środowiska \texttt{eqwhere}.
+
+\begin{equation}
+E = mc^2
+\end{equation}
+gdzie
+\begin{eqwhere}[2cm]
+	\item[$m$] masa
+	\item[$c$] prędkość światła w próżni
+\end{eqwhere}
+
+Odległość półpauzy od lewego marginesu należy dobrać pod kątem najdłuższego symbolu (bądź listy symboli) poprzez odpowiednie ustawienie parametru tego środowiska (domyślnie: 2 cm).
