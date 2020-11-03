@@ -2,41 +2,85 @@
 % 
 % File:     aghdpl.cls           (LaTeX Document class option "aghdpl")
 %          
-% Author:  Marcin Szpyrka     (mszpyrka@agh.edu.pl)
+% Author:  Paweł Kłeczek      (pkleczek@agh.edu.pl)
 %          Grzegorz J. Nalepa (gjn@agh.edu.pl)
-%          Paweł Kłeczek      (p.l.kleczek@gmail.com)
+%          Marcin Szpyrka     (mszpyrka@agh.edu.pl)
 %          AGH University of Science and Technology, Kraków, POLAND
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\message{*** [aghdpl.cls] ---  (MSz, GJN, PK)  v3.1.0 <16.02.2016>  ***}       
+\message{*** [aghdpl.cls] ---  (PK, GJN, MSz)  v4.0 <2020-11-03>  ***}       
 
 \newif\ifpdflatex\pdflatexfalse
 \NeedsTeXFormat{LaTeX2e} % 
 \ProvidesClass{aghdpl} 
+
+\RequirePackage{kvoptions}
+
+\DeclareStringOption[pl]{language}
+\ProcessKeyvalOptions*
+
 \DeclareOption{pdflatex}{\pdflatextrue}
 \DeclareOption*{\PassOptionsToClass{\CurrentOption}{report}} 
 \ProcessOptions\LoadClass[a4paper,twoside,openright]{report} 
 
+\RequirePackage{xstring}
+
+\show\aghdpl@language
+
+\newcommand{\ThesisLanguage}{pl}
+\IfStrEqCase{\aghdpl@language}{%
+	{en}{\renewcommand{\ThesisLanguage}{en}}%
+	{pl}{\renewcommand{\ThesisLanguage}{pl}}%
+}[\PackageError{aghdpl}{Invalid thesis language.}{Available languages: Polish (pl), English (en)}]
+
+\show\ThesisLanguage
+
 \RequirePackage{times}
 \RequirePackage[T1]{fontenc}
+
+% Lista wszystkich języków stanowiących języki pozycji bibliograficznych użytych w pracy.
+% (Zgodnie z zasadami tworzenia bibliografii każda pozycja powinna zostać utworzona zgodnie z zasadami języka, w którym dana publikacja została napisana.)
+\RequirePackage[english,polish]{babel}
+
+% Użyj polskiego łamania wyrazów (zamiast domyślnego angielskiego).
+\RequirePackage{polski}
+
+% Użyj kodowania UTF-8.
+\RequirePackage[utf8]{inputenc}
+
+\RequirePackage{mathtools}
+\RequirePackage{amsfonts}
+\RequirePackage{amsmath}
+\RequirePackage{amsthm}
+
 \RequirePackage{graphicx}
-\RequirePackage{geometry}
 \RequirePackage[usenames]{color}
-\RequirePackage{fancyhdr}
 \RequirePackage{url}
 \RequirePackage{titlesec}
 \RequirePackage{tocloft}
 
 \RequirePackage[font=small, labelfont=bf, labelsep=period]{caption}
 \RequirePackage{subcaption}
-\RequirePackage{siunitx}
 \RequirePackage{enumerate}
 \RequirePackage{enumitem}
-\RequirePackage[all,defaultlines=2]{nowidow} % Kontrola sierot i wdów - działa lepiej niż \widowpenalty i \clubpenalty
 
-\geometry{lmargin=30mm, rmargin=20mm, tmargin=30mm, bmargin=30mm, foot=10mm, head=10mm}
-\definecolor{Green}{rgb}{0.1,0.5,0.1}
+% =============================================================================
+% SEC:   Ustawienia związane z formatowaniem tekstu
+% =============================================================================
+
+\RequirePackage{geometry}
+
+\geometry{lmargin=30mm, rmargin=20mm, tmargin=30mm, bmargin=30mm, foot=10mm, head=10mm}  % rozmiary marginesów i nagłówka/stopki
+\linespread{1.3}  % interlinia
+\renewcommand{\labelitemi}{--}  % znak wypunktowania użyty w liście wypunktowania
+
+\RequirePackage[all,defaultlines=2]{nowidow} % Kontrola sierot i wdów - działa lepiej niż \widowpenalty i \clubpenalty
+\brokenpenalty=10000\relax
+
+% =============================================================================
+% SEC:   Polecenia wymagane m.in. do generowania strony tytułowej
+% =============================================================================
 
 \def\shorttitlePL#1   {\gdef\@shorttitlePL{#1}}
 \def\shorttitleEN#1   {\gdef\@shorttitleEN{#1}}
@@ -50,118 +94,128 @@
 \def\department#1   {\gdef\@department{#1}}
 \def\degreeprogramme#1 {\gdef\@degreeprogramme{#1}}
 
-
-\linespread{1.3}
-\renewcommand{\labelitemi}{--}
-
 %------------------------------------------------------------------------------
 
-
-\def\thesisheaders{
-\fancyfoot[LE,RO]{\small \@shortauthor\quad\textit{\@shorttitlePL}}
-}
-
-\def\thesistable{
-\begin{tabular}{p{45mm}l}
-Autor: & {\itshape \@author}\\[-1mm]
-Kierunek studi\'{o}w: & {\itshape \@degreeprogramme}\\[-1mm]
-Opiekun pracy: & {\itshape \@supervisor}\\
-\end{tabular}
-}
-
-\DeclareOption{en}{
-\def\thesisheaders{
-\fancyfoot[LE,RO]{\small \@shortauthor\quad\textit{\@shorttitleEN}}
-}
-
-\def\thesistable{
-\begin{tabular}{p{45mm}l}
-Author: & {\itshape \@author}\\[-1mm]
-Degree programme: & {\itshape \@degreeprogramme}\\[-1mm]
-Supervisor: & {\itshape \@supervisor}\\
-\end{tabular}
-}
+\IfStrEqCase{\ThesisLanguage}{
+	{pl}{%
+		\def\thesisheaders{
+			\fancyfoot[LE,RO]{\small \@shortauthor\quad\textit{\@shorttitlePL}}
+		}
+		
+		\def\thesistable{
+			\begin{tabular}{p{45mm}l}
+				Autor: & {\itshape \@author}\\[-1mm]
+				Kierunek studiów: & {\itshape \@degreeprogramme}\\[-1mm]
+				Opiekun pracy: & {\itshape \@supervisor}\\
+			\end{tabular}
+		}
+	}
+	{en}{%
+		\def\thesisheaders{
+			\fancyfoot[LE,RO]{\small \@shortauthor\quad\textit{\@shorttitleEN}}
+		}
+		
+		\def\thesistable{
+			\begin{tabular}{p{45mm}l}
+			Author: & {\itshape \@author}\\[-1mm]
+			Degree programme: & {\itshape \@degreeprogramme}\\[-1mm]
+			Supervisor: & {\itshape \@supervisor}\\
+			\end{tabular}
+		}
+	}%
 }
 
 \ProcessOptions
 
 \newcommand{\titlepages}{%
 
-\newpage \titlepage 
-
-\begin{center}
-\vspace*{1.5cm}
-
-\includegraphics[scale=0.6]{agh}
-
-\vspace*{2mm}
-
-{\sffamily{\large{\bfseries{\scshape Akademia G\'{o}rniczo-Hutnicza im. Stanis\l{}awa Staszica w Krakowie}}}
-
-\vspace*{1mm}
-
-{\small\bfseries \MakeUppercase{\@faculty}}}
-\vspace*{3mm}
-
-{\small{\MakeUppercase{\@department}}}
-\vspace*{12mm}
-
-{\sffamily\Large \@thesistype}
-\vspace*{9mm}
-
-{\sffamily\Large\itshape \@titlePL}
-\vspace*{1mm}
-
-{\sffamily\Large\itshape \@titleEN}
-\vspace{\fill}
-\end{center}
-
-\noindent
-{\sffamily
-\thesistable
+	\titlepage
+	
+	\begin{center}
+		\vspace*{1.5cm}
+		
+		\includegraphics[scale=0.6]{agh}
+		
+		\vspace*{2mm}
+		
+		{\sffamily{\large{\bfseries{\scshape Akademia Górniczo-Hutnicza im. Stanisława Staszica w Krakowie}}}
+		
+		\vspace*{1mm}
+		
+		{\small\bfseries \@faculty}}
+		\vspace*{15mm}
+		
+		{\sffamily\Large \@thesistype}
+		\vspace*{9mm}
+		
+		{\sffamily\Large\itshape
+			\IfStrEqCase{\ThesisLanguage}{%
+				{pl}{\@titlePL}
+				{en}{\@titleEN}
+			}
+		}
+		\vspace*{1mm}
+		
+		{\sffamily\Large\itshape
+			\IfStrEqCase{\ThesisLanguage}{%
+				{pl}{\@titleEN}
+				{en}{\@titlePL}
+			}
+		}
+		\vspace{\fill}
+	\end{center}
+	
+	\noindent
+	{
+		\sffamily
+		\thesistable
+	}
+	
+	\vspace*{17mm}
+	
+	\centerline{\small\sffamily Kraków, \@date}
+	
+	\clearpage
+	\thispagestyle{empty} 
+	
+	% Strona z podziękowaniami.
+	{~}\vspace{20mm}
+	
+	\clearpage
+	\titlepage
+	
+	\vspace*{15cm} \vfill
+	\begin{flushright} 
+		\begin{minipage}[!h]{10cm}
+			{\Large\itshape \@acknowledgements}
+		\end{minipage}
+	\end{flushright}
+	
+	\clearpage
+	\thispagestyle{empty}
+	
+	~ \newpage
+	
+	% Obecna strona będzie mieć nr 5.
+	\setcounter{page}{5}
 }
 
-\vspace*{17mm}
 
-\centerline{\small\sffamily Krak\'{o}w, \@date}
+% =============================================================================
+% SEC:   Ustawienia nagłówków i stopek
+% =============================================================================
 
-\clearpage 
-\thispagestyle{empty} 
-
-{~~}\vspace{20mm}
-
-{\large\itshape Uprzedzony o~odpowiedzialno\'sci karnej na~podstawie art.~115 ust.~1~i~2 ustawy z~dnia 4~lutego 1994~r. o~prawie autorskim i~prawach pokrewnych (t.j. Dz.U. z~2006~r. Nr~90, poz.~631 z~p{\'o}{\'z}n. zm.): ,,Kto przyw\l{}aszcza sobie autorstwo albo~wprowadza w~b\l{}\k{a}d co~do~autorstwa ca\l{}o\'sci lub cz\k{e}\'sci cudzego utworu albo~artystycznego wykonania, podlega grzywnie, karze ograniczenia wolno\'sci albo~pozbawienia wolno\'sci do~lat~3. Tej~samej karze podlega, kto~rozpowszechnia bez~podania nazwiska lub~pseudonimu tw\'orcy cudzy utw\'or w~wersji oryginalnej albo~w~postaci opracowania, artystycznego wykonania albo~publicznie zniekszta\l{}ca taki utw\'or, artystyczne wykonanie, fonogram, wideogram lub nadanie.'', a~tak\.ze uprzedzony o~odpowiedzialno\'sci dyscyplinarnej na~podstawie art.~211 ust.~1 ustawy z~dnia 27~lipca 2005~r. Prawo o~szkolnictwie wy\.zszym (t.j. Dz.~U. z~2012~r. poz.~572, z~p\'o\'zn. zm.): ,,Za~naruszenie przepis\'ow obowi\k{a}zuj\k{a}cych w~uczelni oraz~za~czyny uchybiaj\k{a}ce godno\'sci studenta student ponosi odpowiedzialno\'s\'c dyscyplinarn\k{a} przed komisj\k{a} dyscyplinarn\k{a} albo~przed s\k{a}dem kole\.ze\'nskim samorz\k{a}du studenckiego, zwanym dalej <<s\k{a}dem kole\.ze\'nskim>>.'', o\'swiadczam, \.ze~niniejsz\k{a} prac\k{e} dyplomow\k{a} wykona\l{}em(-am) osobi\'scie i~samodzielnie i~\.ze~nie~korzysta\l{}em(-am) ze~\'zr\'ode\l{} innych ni\.z~wymienione w pracy. }
-
-
-\clearpage \titlepage
-
-\vspace*{15cm} \vfill
-\begin{flushright} 
-\begin{minipage}[!h]{10cm}
-{\Large\itshape \@acknowledgements}
-\end{minipage}
-\end{flushright}
-
-\clearpage
-\thispagestyle{empty}
-\vspace*{15cm} \vfill
-\clearpage
-
-\setcounter{page}{5}
-
-}
-
+\RequirePackage{fancyhdr}
 
 \pagestyle{fancy}
 \renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
 \renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+
 \renewcommand{\headrulewidth}{0.5pt}
 \renewcommand{\footrulewidth}{0.5pt}
 \fancyhf{}
 \fancyhead{}
-%\fancyhead[L]{\slshape{\small \rightmark}}
 \fancyhead[RE,LO]{\slshape{\small \rightmark}}
-%\fancyhead[R]{\bfseries \thepage}
 \fancyhead[RO,LE]{\bfseries \thepage}
 
 \thesisheaders
@@ -171,9 +225,9 @@ Supervisor: & {\itshape \@supervisor}\\
 \flushbottom
 
 
-%---------------------------------------------------------------------------
-% Ustawienia parametrów tytułów rozdziałów, podrozdziałów, itd.
-%---------------------------------------------------------------------------
+% =============================================================================
+% SEC:   Ustawienia formatowania tytułów rozdziałów, podrozdziałów, itd.
+% =============================================================================
 
 \titleformat{\chapter}[block]
 {\bfseries\LARGE}{\filright \LARGE\thechapter. }{0ex}{}
@@ -189,10 +243,14 @@ Supervisor: & {\itshape \@supervisor}\\
 {\bfseries\normalsize}{\filright \normalsize\thesubsubsection. }{0ex}{}
 \titlespacing{\subsubsection}{7mm}{3mm}{1.5mm}
 
+% Określ maksymalny poziom numeracji (głębsze poziomy nie będą miały numeru).
+%   (np. 1 - chapter, 2 - section, itd.)
+\setcounter{secnumdepth}{4}
 
-%---------------------------------------------------------------------------
-% Ustawienia parametrów generowania spisu treści i spisu rysunków
-%---------------------------------------------------------------------------
+
+% =============================================================================
+% SEC:   Ustawienia generowania spisu treści i spisu rysunków
+% =============================================================================
 
 \renewcommand{\cfttoctitlefont}{\bfseries\Large}
 \renewcommand{\cftbeforetoctitleskip}{20mm}
@@ -208,28 +266,30 @@ Supervisor: & {\itshape \@supervisor}\\
 \renewcommand{\cftchappagefont}{\normalsize}
 
 
-%---------------------------------------------------------------------------
-% Ustawienia wyświetlania liczb (zgodne z polskimi zwyczajami typograficznymi)
-%---------------------------------------------------------------------------
+% =============================================================================
+% SEC:   Ustawienia wyświetlania liczb (zgodne z polskimi zwyczajami typograficznymi)
+% =============================================================================
+
+\RequirePackage{siunitx}
 
 \sisetup{
-	output-decimal-marker = {,},
+	output-decimal-marker = {,},  % symbol dziesiętny
 	%	round-mode=places,
 	%	round-precision=4,
-	group-separator={~},
+	group-separator={~},  % separator grupy 3 cyfr
 }
 
-%---------------------------------------------------------------------------
-% Ustawienia wyświetlania URL-i
-%---------------------------------------------------------------------------
+% =============================================================================
+% SEC:   Ustawienia wyświetlania URL-i
+% =============================================================================
 
 % Zmiana kroju czcionki URL-i z czcionki o stałej szerokości na szeryfową z kursywą.
 \renewcommand\UrlFont{\rmfamily\itshape}
 
 
-%---------------------------------------------------------------------------
-% Ustawienia podpisów pod ilustracjami
-%---------------------------------------------------------------------------
+% =============================================================================
+% SEC:   Ustawienia podpisów pod ilustracjami
+% =============================================================================
 
 \captionsetup[subfigure]{labelfont=md}
 \captionsetup{%
@@ -242,9 +302,117 @@ Supervisor: & {\itshape \@supervisor}\\
 }
 
 
-%---------------------------------------------------------------------------
-% Środowisko do tworzenia opisów symboli użytych w równaniu.
-%---------------------------------------------------------------------------
+% =============================================================================
+%    SEC:   Konfiguracja bibliografii
+% =============================================================================
+
+\RequirePackage[
+	style=numeric,
+	sorting=none,
+	%
+	% Zastosuj styl wpisu bibliograficznego właściwy językowi publikacji.
+	language=autobib,
+	autolang=other,
+	% Zapisuj datę dostępu do strony WWW w formacie RRRR-MM-DD.
+	urldate=iso8601,
+	% Nie dodawaj numerów stron, na których występuje cytowanie.
+	backref=false,
+	% Podawaj ISBN.
+	isbn=true,
+	% Nie podawaj URL-i, o ile nie jest to konieczne.
+	url=false,
+	%
+	% Ustawienia związane z polskimi normami dla bibliografii.
+	maxbibnames=3,
+	% Jeżeli używamy BibTeXa:
+	backend=bibtex
+]{biblatex}
+
+\RequirePackage{csquotes}
+% Ponieważ `csquotes` nie posiada polskiego stylu, można skorzystać z mocno zbliżonego stylu chorwackiego.
+\DeclareQuoteAlias{croatian}{polish}
+
+\addbibresource{bibliografia.bib}
+
+% Nie wyświetlaj wybranych pól.
+%\AtEveryBibitem{\clearfield{note}}
+
+
+% =============================================================================
+%    SEC:   Konfiguracja listingów
+% =============================================================================
+
+% Użyj czcionki kroju Courier.
+\RequirePackage{courier}
+
+\RequirePackage{listings}
+\lstloadlanguages{TeX}
+
+\lstset{
+	literate={ą}{{\k{a}}}1
+           {ć}{{\'c}}1
+           {ę}{{\k{e}}}1
+           {ó}{{\'o}}1
+           {ń}{{\'n}}1
+           {ł}{{\l{}}}1
+           {ś}{{\'s}}1
+           {ź}{{\'z}}1
+           {ż}{{\.z}}1
+           {Ą}{{\k{A}}}1
+           {Ć}{{\'C}}1
+           {Ę}{{\k{E}}}1
+           {Ó}{{\'O}}1
+           {Ń}{{\'N}}1
+           {Ł}{{\L{}}}1
+           {Ś}{{\'S}}1
+           {Ź}{{\'Z}}1
+           {Ż}{{\.Z}}1,
+	basicstyle=\footnotesize\ttfamily,
+}
+
+
+% =============================================================================
+%    SEC:   Konfiguracja tabel
+% =============================================================================
+
+\RequirePackage{array}
+\RequirePackage{tabularx}
+\RequirePackage{multirow}
+\RequirePackage{booktabs}
+\RequirePackage{makecell}
+\RequirePackage[flushleft]{threeparttable}
+
+% defines the X column to use m (\parbox[c]) instead of p (`parbox[t]`)
+\newcolumntype{C}[1]{>{\hsize=#1\hsize\centering\arraybackslash}X}
+
+% =============================================================================
+%    SEC:   INNE
+% =============================================================================
+
+\newcommand{\RedefinePlainStyle}{%
+	% Ponowne zdefiniowanie stylu `plain`, aby usunąć numer strony z pierwszej strony spisu treści i poszczególnych rozdziałów.
+	\fancypagestyle{plain}
+	{
+		% Usuń nagłówek i stopkę
+		\fancyhf{}
+		% Usuń linie.
+		\renewcommand{\headrulewidth}{0pt}
+		\renewcommand{\footrulewidth}{0pt}
+	}
+}
+
+\AtBeginDocument{
+	\renewcommand{\tablename}{Tabela}
+	\renewcommand{\figurename}{Rys.}
+}
+
+% =============================================================================
+% SEC:   Niestandardowe środowiska
+% =============================================================================
+
+% ----------------------------------------------------------------------------
+%    Środowisko do tworzenia opisów symboli użytych w równaniu
+% ----------------------------------------------------------------------------
 
 \SetLabelAlign{parright}{\parbox[t]{\labelwidth}{\raggedleft#1}}
 \setlist[description]{style=multiline, topsep=10pt, align=parright}
@@ -262,7 +430,7 @@ Supervisor: & {\itshape \@supervisor}\\
 
 \newenvironment{eqwhere}[1][]
 {%
-\setlength{\eqwheremargin}{#1}%
-\begin{description}[leftmargin=\eqwheremargin, itemsep=0cm, labelsep=0cm]
+	\setlength{\eqwheremargin}{#1}%
+	\begin{description}[leftmargin=\eqwheremargin, itemsep=0cm, labelsep=0cm]
 }
 {\end{description}}
