@@ -72,7 +72,7 @@
 \RequirePackage{geometry}
 
 \geometry{lmargin=30mm, rmargin=20mm, tmargin=30mm, bmargin=30mm, foot=10mm, head=10mm}  % rozmiary marginesów i nagłówka/stopki
-\linespread{1.3}  % interlinia
+\linespread{1.25}  % interlinia
 \renewcommand{\labelitemi}{--}  % znak wypunktowania użyty w liście wypunktowania
 
 \RequirePackage[all,defaultlines=2]{nowidow} % Kontrola sierot i wdów - działa lepiej niż \widowpenalty i \clubpenalty
