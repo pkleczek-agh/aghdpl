@@ -125,8 +125,6 @@
 	}%
 }
 
-\ProcessOptions
-
 \newcommand{\titlepages}{%
 
 	\titlepage
@@ -137,12 +135,13 @@
 		\includegraphics[scale=0.6]{agh}
 		
 		\vspace*{2mm}
-		
-		{\sffamily{\large{\bfseries{\scshape Akademia Górniczo-Hutnicza im. Stanisława Staszica w Krakowie}}}
-		
-		\vspace*{1mm}
-		
-		{\small\bfseries \@faculty}}
+		{
+			\scalebox{0.95}{\sffamily{\large{\bfseries{\scshape Akademia Górniczo-Hutnicza im. Stanisława Staszica w Krakowie}}}}
+			
+			\vspace*{1mm}
+			
+			{\sffamily\small\bfseries \@faculty}
+		}
 		\vspace*{15mm}
 		
 		{\sffamily\Large \@thesistype}
