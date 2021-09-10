@@ -183,17 +183,17 @@
 	\clearpage
 	\titlepage
 	
-%	\vspace*{15cm} \vfill
-%	\begin{flushright} 
-%		\begin{minipage}[!h]{10cm}
-%			{\Large\itshape \@acknowledgements}
-%		\end{minipage}
-%	\end{flushright}
-%	
-%	\clearpage
-%	\thispagestyle{empty}
-%	
-%	~ \newpage
+	\vspace*{15cm} \vfill
+	\begin{flushright} 
+		\begin{minipage}[!h]{10cm}
+			{\Large\itshape \@acknowledgements}
+		\end{minipage}
+	\end{flushright}
+	
+	\clearpage
+	\thispagestyle{empty}
+	
+	~ \newpage
 	
 	% Obecna strona będzie mieć nr 5.
 	\setcounter{page}{5}
